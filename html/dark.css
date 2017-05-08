@@ -1,0 +1,232 @@
+@charset "utf-8";
+/*================================  dark.css  ================================*/
+/*  by Chris Magyar...                                 c.magyar.ec@gmail.com  */
+/*  Free as in speech...                               use/change this shit!  */
+/*============================================================================*/
+
+/* To do yet:  
+- make links div only as wide as widest line
+- bullet images
+- horizontal link bar
+- footer
+- mobile configuration (media queries)
+*/
+
+/*============================  COLORS  ============================*/
+/* Colors all appear as these exact strings 
+   to facilitate easy search and replace. */
+/* #EEEEEE; /* body */
+/* #444444; /* body_background */
+/* #222222; /* links_background */
+/* #696969; /* heading_background */
+/* #333333; /* main_background */
+/* #181818; /* codebox_background */
+/* #888888; /* codebox_output */
+/* #1A5A98; /* border_01 */
+/* #8CB3D9; /* border_02 */
+/* #555555; /* codebox_border */
+/* #BFE6EF; /* codebox */
+/* #639BD2; /* variable */
+/* #B12600; /* link_hover */
+/* #8CB3D9; /* link */
+/* #000000; /* heading */
+/* #00FF00; /* correct */
+
+
+/*========================  BUILT-IN TAGS  =========================*/
+
+html {
+    height: 100vh;
+}
+
+body {
+    height: 100vh;
+    margin: 0px;
+    padding: 0px;
+    background-color: #444444; /* body_background */
+    color: #EEEEEE; /* body */
+    font-size: 16px;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    margin: 0px 0px 5px;
+    padding: 0px;    
+    overflow: hidden;     
+    font-weight: bold;
+    border-bottom: solid 3px #1A5A98; /* border_01 */
+    color: #1A5A98; /* border_01 */
+}
+
+h1 {
+    border-bottom-width: 5px;    
+}
+
+h4,h5 {
+    border-bottom-width: 1px;    
+}
+
+p {
+    margin: 0px;
+    padding: 0px;
+    text-indent: 0em;
+}
+
+a:link,a:visited {
+    color: #8CB3D9; /* link */
+    text-decoration: none;
+}
+
+a:hover {
+    color: #B12600; /* link_hover */
+    text-decoration: none;
+}
+
+a:active {
+    color: #8CB3D9; /* link */
+    text-decoration: none;
+}
+
+
+/*=============================  IDs  ==============================*/
+
+#wrapper {
+/* contains all other divs */
+    height: 100vh;
+    width: 95%;
+    margin: 0px auto 0px;
+    padding: 0px;
+}
+
+#heading {
+/* contains #headingright */
+    margin: 0px;
+    padding: 0px 10px 0px;
+    border-left: solid 3px #8CB3D9; /* border_02 */    
+    border-right: solid 3px #8CB3D9; /* border_02 */ 
+    border-bottom: solid 3px #8CB3D9; /* border_02 */
+    background-color: #696969; /* heading_background */
+}
+#heading h1, #heading h2, #heading h3 {
+    margin: 0px;
+    padding: 0px;
+    font-weight: bold;
+    font-family: monospace;
+    font-variant: small-caps;
+    color: #000000; /* heading */
+}
+#heading h1 {
+    font-size: 42px;
+    margin-bottom: -0.2em;
+}
+#heading h2 {
+    font-size: 36px;
+    margin-bottom: -0.2em;
+}
+#heading h3 {
+    font-size: 18px;
+    overflow: hidden;
+    border-bottom: solid 1px #000000; /* heading */
+    margin-bottom: -0.2em;
+}
+
+#headingright {
+/* inside #heading */
+    float: right;
+    width: 20%;
+    margin-left: 30%;
+    padding: 0px;
+    text-align: right;
+}
+
+#content {
+/* contains #links */
+    min-height: 100vh;
+    margin: 0px;
+    padding: 10px 15px 5px;
+    border-left: solid 8px #1A5A98; /* border_01 */
+    border-right: solid 3px #8CB3D9; /* border_02 */
+    overflow: auto;
+    background-color: #333333; /* main_background */    
+}
+#content .section:before {
+    content: '';
+}
+#content .subsection:before {
+    content: '\00a0\00a0';
+}
+
+#links {
+/* inside #content */
+/* floating link box  */
+    display: inline-block;
+    float: right;
+    margin: 0px 0px 0px 15px;    
+    padding: 10px;
+    border: solid 3px #1A5A98; /* border_01 */
+    background-color: #222222; /* links_background */
+}
+#links h4 {
+    border-bottom: solid 3px #1A5A98; /* border_01 */    
+}
+#links .section,.subsection {
+    padding-right: 15px;
+}
+#links .section:before {
+    content: '\26AB\00a0';
+}
+#links .subsection:before {
+    content: '\00a0\00a0\26AC\00a0';
+}
+
+
+/*========================  BLOCK CLASSES  =========================*/
+
+.codebox {
+/* code box displayed with black background */
+    display: block;
+    margin: 3px 0px 3px;
+    padding: 1px 3px 1px;
+    background-color: #181818; /* codebox_background */
+    border: solid 1px #555555; /* codebox_border */
+    color: #BFE6EF; /* codebox */
+    font-family: Courier New;
+    overflow: hidden;
+}
+.codebox.input:before {
+    color: #888888; /* codebox_output */
+    content: '# ';
+}
+.output {
+    color: #888888; /* codebox_output */
+}
+.pre {
+    white-space: pre;
+}
+
+/*========================  INLINE CLASSES  ========================*/
+
+.code {
+    font-family: Courier New;
+}
+
+.variable {
+    font-family: Courier New;
+    font-style: italic;
+    color: #639BD2; /* variable */
+}
+
+.file {
+    font-style: italic;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.emph {
+    font-style: italic;
+}
+
+.correct {
+    color: #00FF00; /* correct */
+}

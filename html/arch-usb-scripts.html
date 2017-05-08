@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--<==================================  arch-usb-scripts.html  ==================================##
+#  by Chris Magyar...                                                       c.magyar.ec@gmail.com  #
+#  Free as in speech...                                                     use/change this shit!  #
+##==============================================================================================>-->
+
+<head>
+    <title>ArchLinux on USB | Helper Scripts</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Scripts to hasten Arch Linux installation.">
+    <meta name="keywords" content="Linux, Arch Linux, USB, install, persistent, script">
+    <meta name="author" content="Chris Magyar">
+    <link rel="stylesheet" href="dark.css">
+</head>
+
+<body>
+<div id="wrapper">                                                                 <!-- #wrapper -->
+
+<!--<=======================================  HEADING  ========================================>--->
+<div id="heading">                                                             <!-- #heading -->
+    <!-- headingright -->
+    <div id="headingright">
+        <h3>C.Magyar</h3>
+    </div>
+    <!-- /headingright -->
+
+    <!-- headingleft -->
+    <h3>Persistent Bootable - ArchLinux USB</h3>
+    <h1>Helper Scripts</h1>
+    <!-- /headingleft -->
+</div>                                                                        <!-- /#heading -->
+<div id="content">                                                             <!-- #content -->
+<!--<========================================  LINKS  =========================================>--->
+<div id="links">                                                             <!-- #links -->
+
+<!--<==================================  Overview  ==================================>--->
+<h4>Overview</h4>
+
+<!--<========================  Git These Scripts  =========================>--->
+<a href="#git_scripts" target="_self" class="section">Git These Scripts</a><br>
+
+<!--<=========================  Install Scripts  ==========================>--->
+<a href="#install" target="_self" class="section">Installer Scripts</a><br>
+    <a href="#core" target="_self" class="subsection">arch-usb_core.sh</a><br>
+    <a href="#recommended" target="_self" class="subsection">arch-usb_recommended.sh</a><br>
+    <a href="#aur" target="_self" class="subsection">arch-usb_aur.sh</a><br>
+
+<!--<=========================  Network Scripts  ==========================>--->
+<a href="#network" target="_self" class="section">Network Scripts</a><br>
+    <a href="#uwec" target="_self" class="subsection">UWEC connections</a><br>
+<br>
+
+<!--<===============================  ArchLinux USB  ================================>--->
+<h4>ArchLinux USB</h4>
+<a href="arch-usb.html" target="_self" class="section">Installation Guide</a><br>
+<a href="arch-usb-more.html" target="_self" class="section">Advanced Options</a><br> 
+
+</div>                                                                       <!-- /links -->
+    
+<!--<=====================================  MAIN CONTENT  =====================================>--->
+<p>This page covers several scripts I have made ease to setting up and using the Arch USB.
+These scripts are intended to be used after one has completed the <a href="arch-usb.html"
+target="_self">installation instructions</a> and has a normal user account configured with sudo
+permissions.</p>
+<br>
+
+<p>These scripts are in no way required to setup or use the persistent Arch Linux USB.  They
+exist mostly as tools I've created for myself but will quicken any user's installation process.
+Feel free to modify these to your needs.</p>
+<br>
+<br>
+
+<!--<==================================  Git These Scripts  ===================================>--->
+<h3 id="git_scripts" class="section">Git These Scripts</h3>
+
+<p>The helper scripts are hosted in a public repository:
+<a href="https://gitlab.com/c.magyar/archlinux-usb"
+target="_blank">https://gitlab.com/c.magyar/archlinux-usb</a>.</p>
+
+<br>
+
+<p>First, you'll need to ensure you have <span class="emph">git</span> installed:</p>
+<div class="codebox input">
+    sudo pacman -S git
+</div>
+<br>
+
+<p>Clone the repository to download all the scripts:</p>
+<div class="codebox input">
+    git clone https://gitlab.com/c.magyar/archlinux-usb.git
+</div>
+<br>
+<br>
+
+<!--<==================================  Installer Scripts  ===================================>--->
+<h3 id="install" class="section">Installer Scripts</h3>
+
+<p>Included in the repo are three scripts to help install packages.  Each script prompts for
+user confirmation before taking any action and offers a prompt per package option.</p>
+<br>
+
+<p>To execute a script, you can use <span class="emph">sh</span> to invoke the shell interpreter:</p>
+<div class="codebox input">
+    sh arch-usb_recommended.sh
+</div>
+<br>
+
+<p>Or you can make the script executable:</p>
+<div class="codebox input">
+    chmod +x arch-usb_recommended.sh
+</div>
+<p>And execute it directly:</p>
+<div class="codebox input">
+    ./arch-usb_recommended.sh
+</div>
+<br>
+
+<!--<==============================  arch-usb_core.sh  ==============================>--->
+<h4 id="core" class="subsection">arch-usb_core.sh</h4>
+
+<p>The <span class="emph">arch-usb_core.sh</span> script is written to simply reinstall the base
+packages from the <a href="arch-usb.html" target="_self">installation guide</a>.  Running this
+script shouldn't ever really be necessary, but it is provided for the sake of utility.</p>
+<br>
+
+<!--<==========================  arch-usb_recommended.sh  ===========================>--->
+<h4 id="recommended" class="subsection">arch-usb_recommended.sh</h4>
+
+<p>A core Arch Linux installation basically includes the minimum number of packages necessary
+to boot up a computer.  Installing and configuring a graphical user interface with modern
+multimedia support requires users to individually build up their respective systems.  The <span
+class="emph">arch-usb_recommended.sh</span> script is provided to install a decent sane package
+set to obtain a graphic user interface as quickly as possible.</p>
+<br>
+
+<p>Executing <span class="emph">arch-usb_recommended.sh</span> as it is will install two <a
+href="https://en.wikipedia.org/wiki/X_Window_System" target="_blank">X window</a> environments
+(<a href="https://www.xfce.org/" target="_blank">xfce</a> and <a href="https://i3wm.org/"
+target="_blank">i3wm</a>) to choose from along with a basic application set similar to that
+included with the installation of other more graphical distros.</p>
+<br>
+
+<p>Users are encouraged to view and modify the package list in this script to fit their needs:</p>
+<div class="codebox input">
+    nano arch-usb_recommended.sh
+</div>
+<br>
+
+<!--<==============================  arch-usb_aur.sh  ===============================>--->
+<h4 id="recommended" class="aur">arch-usb_aur.sh</h4>
+
+<p>The <a href="https://wiki.archlinux.org/index.php/official_repositories"
+target="_blank">official Arch Linux repositories</a> include about 15000 packages.  However,
+the <a href="https://wiki.archlinux.org/index.php/Arch_User_Repository" target="_blank">Arch
+User Repository</a> (AUR) contains about 40000 additional package descriptions maintained by the
+Arch Linux community.  These packages are not officially supported, and must be built from source
+using the <a href="https://wiki.archlinux.org/index.php/Arch_Build_System" target="_blank">Arch
+Build System</a>.</p>
+<br>
+
+<p>The <span class="emph">arch-usb_aur.sh</span> script is written to download, build, and
+install various packages contained in the AUR (such as dropbox).  Again, users are encouraged
+to edit the package list to fit their needs:</p>
+<div class="codebox input">
+    nano arch-usb_aur.sh
+</div>
+<br>
+
+</div>                                                                    <!-- /#content -->
+</div>                                                                            <!-- /#wrapper -->
+</body>
+</html>

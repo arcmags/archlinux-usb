@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--<======================================  arch-usb.html  ======================================##
+#  by Chris Magyar...                                                       c.magyar.ec@gmail.com  #
+#  Free as in speech...                                                     use/change this shit!  #
+##==============================================================================================>-->
+
+<head>
+    <title>ArchLinux on USB</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Guide to installing Arch Linux on a USB stick.">
+    <meta name="keywords" content="Linux, Arch Linux, USB, install, persistent">
+    <meta name="author" content="Chris Magyar">
+    <link rel="stylesheet" href="dark.css">
+</head>
+
+<body>
+<div id="wrapper">                                                                 <!-- #wrapper -->
+
+<!--<=======================================  HEADING  ========================================>--->
+<div id="heading">                                                             <!-- #heading -->
+    <div id="headingright">                                           <!-- #headingright -->
+        <h3>C.Magyar</h3>
+    </div>                                                           <!-- /#headingright -->
+    
+    <h3>Persistent Bootable</h3>
+    <h1>ArchLinux USB</h1>
+
+</div>                                                                        <!-- /#heading -->
+<div id="content">                                                             <!-- #content -->
+<!--<========================================  LINKS  =========================================>--->
+<div id="links">                                                             <!-- #links -->
+
+<!--<==================================  Overview  ==================================>--->
+<h4>Overview</h4>
+
+<!--<=========================  Why Arch Linux?  ==========================>--->
+<a href="#why" target="_self" class="section">Why Arch Linux?</a><br>
+<a href="#about" target="_self" class="subsection">about this guide</a><br>
+
+<!--<=========================  Before You Begin  =========================>--->
+<a href="#before" target="_self" class="section">Before You Begin</a><br>
+<a href="#live_image" target="_self" class="subsection">live image</a><br>
+<a href="#wired_vs_wifi" target="_self" class="subsection">wired vs wifi</a><br>
+<a href="#BIOS_vs_UEFI" target="_self" class="subsection">BIOS vs UEFI</a><br>
+<a href="#secure_boot" target="_self" class="subsection">secure boot</a><br>
+<a href="#localtime_vs_UTC" target="_self" class="subsection">localtime vs UTC</a><br>
+<a href="#i686_vs_x86_64" target="_self" class="subsection">i686 vs x86_64</a><br>
+<a href="#partitioning_notes" target="_self" class="subsection">partitioning notes</a><br>
+
+<!--<====================  Boot Live Installation ISO  ====================>--->
+<a href="#boot_live" target="_self"  class="section">Boot Live Installation ISO</a><br>
+<a href="#change_keys" target="_self" class="subsection">keymap and/or language</a><br>
+
+<!--<=====================  Connect to the Internet  ======================>--->
+<a href="#connect" target="_self"  class="section">Connect to the Internet</a><br>
+<a href="#wired" target="_self" class="subsection">wired</a><br>
+<a href="#wireless" target="_self" class="subsection">wireless</a><br>
+<a href="#live_system_time" target="_self" class="subsection">system time</a><br>
+
+<!--<========================  Prepare USB Stick  =========================>--->
+<a href="#prepare" target="_self" class="section">Prepare USB Stick</a><br>
+<a href="#partition" target="_self" class="subsection">partition</a><br>
+<a href="#format" target="_self" class="subsection">format</a><br>
+
+<!--<=====================  Install Base Package Set  =====================>--->
+<a href="#base" target="_self" class="section">Install Base Package Set</a><br>
+<a href="#mount" target="_self" class="subsection">mount</a><br>
+<a href="#pacstrap" target="_self" class="subsection">pacstrap</a><br>
+<a href="#fstab" target="_self" class="subsection">fstab</a><br>
+
+<!--<=======================  Configure New System  =======================>--->
+<a href="#configure" target="_self" class="section">Configure New System</a><br>
+<a href="#chroot" target="_self" class="subsection">chroot</a><br>
+<a href="#locale" target="_self" class="subsection">locale</a><br>
+<a href="#hostname" target="_self" class="subsection">hostname</a><br>
+<a href="#system_clock" target="_self" class="subsection">system clock</a><br>
+<a href="#RAM_disk" target="_self" class="subsection">RAM disk image</a><br>
+<a href="#network_interface_names" target="_self" class="subsection">network interface names</a><br>
+<a href="#journal_config" target="_self" class="subsection">journal config</a><br>
+<a href="#mount_options" target="_self" class="subsection">mount options</a><br>
+<a href="#bootloader" target="_self" class="subsection">bootloader</a><br>
+<a href="#network_support" target="_self" class="subsection">network support</a><br>
+<a href="#video_drivers" target="_self" class="subsection">video drivers</a><br>
+<a href="#touchpad_support" target="_self" class="subsection">touchpad support</a><br>
+<a href="#battery_support" target="_self" class="subsection">battery support</a><br>
+<a href="#root_passwd" target="_self" class="subsection">root password</a><br>
+<a href="#usersetup" target="_self" class="subsection">sudo user account</a><br>
+<a href="#reboot" target="_self" class="subsection">reboot new system</a><br>
+<a href="#netctl-ifplud" target="_self" class="subsection">netctl-ifplud</a><br>
+<a href="#wifi-menu" target="_self" class="subsection">wifi-menu</a><br>
+<a href="#timedatectl" target="_self" class="subsection">network time protocol</a><br>
+<a href="#logout" target="_self" class="subsection">logout</a><br>
+
+<!--<======================  Installation Complete  =======================>--->
+<a href="#complete" target="_self" class="section">Installation Complete</a><br>
+<br>
+
+<!--<=============================  Post Installation  ==============================>--->
+<h4>Post Installation</h4>
+<a href="arch-usb-scripts.html" target="_self" class="section">Helper Scripts</a><br> 
+<a href="arch-usb-more.html" target="_self" class="section">Advanced Options</a><br>
+</div>                                                                      <!-- /#links -->
+
+<!--<=====================================  MAIN CONTENT  =====================================>--->
+<p>This page explains how to install Arch Linux on a USB key (flash drive).  The end result
+will be a persistent installation identical to that on a normal hard drive with the goal of
+maximum compatibility with any machine the flash drive is boot on.</p>
+<br>
+<br>
+
+<!--<===================================  Why Arch Linux?  ====================================>--->
+<h3 id="why" class="section">Why Arch Linux?</h3>
+
+<p>There are already several guides to setting up a persistent Linux installation
+on a USB drive out there, including a decent <a href="https://wiki.archlinux.org/"
+target="_blank">ArchWiki</a>
+<a href="https://wiki.archlinux.org/index.php/Installing_Arch_Linux_on_a_USB_key"
+target="_blank">page</a>.  In theory, an installation on a USB key should be no different than any
+other installation, and perhaps some GUI installers out there will work just fine.  However I've
+heard of several failed attempts at getting a USB Linux installation working properly when
+working from said installers or guides.  I have a few ideas on why this might be occurring and
+have attempted to correct these scenarios  with this process.  Arch Linux serves this purpose
+well due to its ability to easily change  configuration options to the user's need.</p>
+<br>
+
+<!--<==============================  about this guide  ==============================>--->
+<h4 id="about" class="subsection">about this guide</h4>
+<p>Perhaps the biggest reason for the existence of this entire guide is my own curiosity. You
+may find the nature of an Arch Linux installation provides more insight into what is happening
+behind the scenes than any GUI installation tool out there.  Messing around with Linux like
+this can be fun (and frustrating!).  I find learning how my computer works and finely tuning
+its configuration to be rewarding.  With an Arch Linux persistent bootable USB I have my
+own completely custom operating system, application set, and user interface with me in my pocket
+everywhere I go!</p>
+<br>
+
+<p>Also, I suppose I should say, I am in no way officially associated with Linux or the Arch
+Linux project.  I am simply a curious tinkerer who uses the act writing things like this as
+a learning experience.  I have personally followed these steps over a dozen times on multiple
+computers with no problems, but I can't guarantee it will work for you.  I wrote this guide to be
+(hopefully) followable by anyone with a moderate understanding of current PCs.  My intention is
+for this to be a fully self contained guide, yet numerous links are provided throughout the text
+to supporting references and additional resources.</p>
+<br>
+<br>
+
+<!--<===================================  Before You Begin  ===================================>--->
+<h3 id="before" class="section">Before You Begin</h3>
+
+<p>To begin this installation you will need a USB flash drive to install on, of course.
+Although a typical Arch Linux installation with a fully functional desktop environment
+usually ranges from about 3GB to 5GB, I recommend using at least a 16GB stick.  Being that
+this is an entirely portable Linux system of your own, you may want to load it up with
+a collection of some great GNU and open source software packages out there.  With some
+large packages like <a href="http://www.sagemath.org/" target="_blank">SageMath</a>, <a
+href="https://www.tug.org/texlive/" target="_blank">TeX Live</a>, and various developer tools,
+my current Arch Linux USB drive sits at around 12GB.</p>
+<br>
+
+<!--<=================================  live image  =================================>--->
+<h4 id="live_image" class="subsection">live image</h4>
+
+<p>You will also need to <a href="https://www.archlinux.org/download/" target="_blank">download</a>
+an Arch Linux bootable installation ISO and either burn it to a CD or write it to a different USB
+stick than the one you will be installing your persistent copy on.  I have used both methods with
+no problems, but the speed of installation is much greater when using a bootable USB stick.</p>
+<br>
+
+<p>To write a bootable USB installation medium in Linux, run the following command; <span
+class="variable">/path/archlinux.iso</span> is the path to the downloaded ISO and <span
+class="variable">/dev/sdX</span> is the path to your unmounted target USB drive:</p>
+<div class="codebox input">
+    dd bs=4M if=<span class="variable">/path/archlinux.iso</span>
+    of=<span class="variable">/dev/sdX</span> status=progress &amp;&amp; sync
+</div>
+<br>
+
+<p>To make a bootable USB using Windows, I have used the open source GUI tool <a
+href="https://rufus.akeo.ie/" target="_blank">Rufus</a> on several occasions without any issues.
+If Rufus doesn't work for you, there are multiple other 
+<a href="http://www.makeuseof.com/tag/10-tools-make-bootable-usb-iso-file/" 
+target="_blank">programs</a> intended for the same thing.</p>
+<br>
+
+<p>Users with a current working installation of Arch Linux can opt to forgo a new boot
+medium altogether and simply partition, format, <span class="emph">pacstrap</span>, and <span
+class="emph">arch-chroot</span> into the target USB drive instead.  The instructions to do
+so are not explicitly provided here as that is not the scope of this guide, but the important
+parts of the process are identical.</p>
+<br>
+
+<!--<===============================  wired vs wifi  ================================>--->
+<h4 id="wired_vs_wifi" class="subsection">wired vs wifi</h4>
+
+<p>For the actual installation you will need a computer connected to the internet.  A wired
+connection is definitely preferred as the bootable installation ISO is setup to automatically
+detect and connect to any wired network on bootup.  Also, any packages you choose to install
+will need to be downloaded from the Arch Linux repositories, and network speed may be a limiting
+factor over wifi.</p>
+<br>
+
+<p>The instructions in this guide will setup your persistent bootable USB to automatically
+configure a wired network connection whenever a network cable is detected.  Support for
+most wifi interfaces will also be installed, but automatic connection will not be enabled.
+Having automatic wifi connection capability is quite simple to setup, but for this bootable Linux
+USB it won't be enabled by default as not every machine it is boot on will even have a wifi
+interface.</p>
+<br>
+
+<p>Lastly, Linux kind of has a horrible history of working with some wifi interfaces.  There is a
+chance, albeit rare, that you may be the proud owner of a wifi networking device not compatible
+with Linux... yet (until you write the driver for it!).  For more information pertaining to
+Linux wireless interface compatibility, see the official <a href="https://wireless.wiki.kernel.org/"
+target="_blank">wireless wiki</a>.</p>
+<br>
+
+<!--<================================  BIOS vs UEFI  ================================>--->
+<h4 id="BIOS_vs_UEFI" class="subsection">BIOS vs UEFI</h4>
+
+<p>Basically, there are two different systems implemented today that
+motherboards use to communicate between an operating system and their firmware.
+There is the standard (legacy) <a href="https://en.wikipedia.org/wiki/BIOS"
+target="_blank">BIOS</a> (basic input/output system), and there is the newer <a
+href="https://wiki.archlinux.org/index.php/Unified_Extensible_Firmware_Interface"
+target="_blank">UEFI</a> (unified extensible firmware interface).  Although UEFI was implemented
+on some top-end machines in the early 2000s, any computer more than six or seven years old is
+probably only going to be able to boot up in BIOS mode.  Newer machines, on the other hand, will
+often be capable of booting in both UEFI mode and BIOS mode.  Many times a preferred boot mode can
+be selected from the BIOS menu on such machines.  Current Apple computers only recognize UEFI.</p>
+<br>
+
+<p>Both BIOS and UEFI require different particular partition schemes in order to boot.  If the
+motherboard is set to boot in UEFI mode only and the inserted boot media does not have the
+correct partition scheme for UEFI, the boot will fail; the same goes for an attempted BIOS boot.
+This is one place I believe some of the USB installation guides out there fail: they often only
+describe how to create a USB boot device that uses only one mode.  It is possible, however,
+to setup a USB drive that will have a partition scheme allowing it to boot in both modes and
+still use the same persistent installation of Linux.  This guide will setup such a scheme in
+the partitioning and formatting sections below.</p>
+<br>
+
+<p>On most newer machines, you will be presented with the option to boot in either BIOS or
+UEFI mode from your bootable USB.  This means the machine recognizes the UEFI boot media, but
+it does not always mean the machine is actually set to boot in UEFI mode, and selecting the UEFI
+boot option may fail.  Selecting a mode that the motherboard is not set to boot in will not damage
+anything or touch any of the other drives on the machine, the boot will simply fail and one can
+reboot in the other mode.  The USB stick created with this guide has been able to boot on every
+(about a dozen) desktop and laptop, new and old, BIOS and UEFI, machine that I have tried it on.<p>
+<br>
+
+<!--<================================  secure boot  =================================>--->
+<h4 id="secure_boot" class="subsection">secure boot</h4>
+
+<p>The new UEFI specification also includes an optional mechanism to protect against
+pre-boot malware.  The <a href="http://www.rodsbooks.com/efi-bootloaders/secureboot.html"
+target="_blank">secure boot</a> protocol is designed to only allow the booting of images signed with
+a <a href="https://en.wikipedia.org/wiki/Key_(cryptography)" target="_blank">cryptographic key</a>
+contained in a machine's <a href="https://en.wikipedia.org/wiki/Non-volatile_random-access_memory"
+target="_blank">NVRAM</a>.  If secure boot is enabled and a boot image lacks a cryptographic
+signature or the signature doesn't correspond to a key listed in the computer's NVRAM, the firmware
+will refuse to execute the boot image.  The most common workaround when dealing with secure boot
+on Linux machines is to simply disable the secure boot option in the machine's BIOS menu.</p>
+<br>
+
+<p>If you do not wish to disable secure boot or it is not possible to disable secure boot, you
+will need to properly sign the boot loader image with a Microsoft key.  Due to the Microsoft
+requirement that all computers sold with a factory installed copy of Windows 8 ship with secure
+boot enabled, vendors have had to include Microsoft's keys in the NVRAM of all new computers.
+This means any boot image signed with a Microsoft key will properly execute on a machine with
+secure boot enabled.</p>
+<br>
+
+<p>Signing the boot loader image of the Arch Linux USB with a Microsoft key is entirely possible,
+but will not be explicitly covered in this guide.  Personally, I have encountered few public
+machines with secure boot enabled, but in the name of ultimate utility, signing with a Microsoft
+key is recommended.  For instructions on signing the Arch Linux USB with a Microsoft key, see
+the <a href="arch-usb-more.html"
+target="_self">extra options</a>.</p>
+<br>
+
+
+<!--<==============================  localtime vs UTC  ==============================>--->
+<h4 id="localtime_vs_UTC" class="subsection">localtime vs UTC</h4>
+
+<p>There are two time standards used by the internal hardware clock of a modern
+computer to store the current time.  Localtime is dependent on the machine's
+current geographical time zone and often takes daylight savings into account, while <a
+href="https://en.wikipedia.org/wiki/Coordinated_Universal_Time" target="_blank">UTC</a> (coordinated
+universal time) is the same regardless of global location.  The hardware clock stores the current
+time, in one of these two formats, by storing separate values for <span class="emph">year</span>,
+<span class="emph">month</span>, <span class="emph">day</span>, <span class="emph">hour</span>,
+<span class="emph">minute</span>, and <span class="emph">second</span>.</p>
+<br>
+
+<p>The hardware clock does not, however, retain any record of what format its time values are
+kept in or if there has been any adjustment made for daylight savings.  It's up to the operating
+system to keep track of these settings.  This can pose some issues if multiple operating systems
+are boot on the same computer using localtime as its time format.  For instance, both operating
+systems might adjust the hardware clock time for daylight savings resulting in an extra hour
+of difference.</p>
+<br>
+
+<p>The obvious solution, here, is to simply use UTC on all operating systems and be done with it.
+MacOS uses UTC, Linux uses UTC by default, but Windows uses localtime by default.  In other words,
+when booting the Linux USB off of a machine primarily used with Windows, the chances are that
+the hardware clock is going to appear to be incorrect.</p>
+<br>
+
+<p>What this means for the Linux USB is that you may occasionally see some time-stamp warning
+messages when you boot up your USB off different machines.  We will enable a network time
+protocol so that the USB Linux system will update its operating system clock as soon as an
+internet connection is established and correct these discrepancies.  More importantly, though,
+the Linux system will also update the hardware clock to the correct time in UTC, meaning the
+next time Windows is boot it may encounter some time-stamp errors.  In my experience, this hasn't
+been an issue beyond the infrequent warning message at bootup.</p>
+<br>
+
+
+<!--<===============================  i686 vs x86_64  ===============================>--->
+<h4 id="i686_vs_x86_64" class="subsection">i686 vs x86_64</h4>
+
+<p>Arch Linux is optimized for both i686 (32-bit) and x86_64 (64-bit) machine architectures.
+While a single 32-bit installation will boot on both types of machine, it is not optimal for
+a 64-bit machine.  The 32-bit version of Arch Linux can be installed from any machine, but to
+install the 64-bit version you must be booted on a 64-bit machine.</p>
+<br>
+
+<p>Besides that, the choice of a 32-bit versus a 64-bit installation of Arch Linux is entirely
+up to the you.  Simply select the desired version from the initial installation ISO boot
+menu: <span class="emph">Boot Arch Linux (x86_64)</span> for a 64-bit installation, or <span
+class="emph">Boot Arch Linux (i686)</span> for a 32-bit installation.</p>
+<br>
+
+<p>It is possible to make make two separate installations (64 and 32-bit) on two different
+partitions of the same USB stick.  This page only explicitly describes the process of setting
+up a single partition and installation of Arch Linux.  For information on setting up multiple
+partitions with multiple persistent operating systems, see the <a href="arch-usb-more.html"
+target="_self">extra options</a>.</p>
+<br>
+
+<p>The personal Linux USB I've been using has a single 64-bit installation, and lack of 
+compatibility has yet to be an issue.</p>
+<br>
+
+<!--<=============================  partitioning notes  =============================>--->
+<h4 id="partitioning_notes" class="subsection">partitioning notes</h4>
+
+<p>Another possibly useful option not explicitly shown in this guide is
+partitioning the target USB device to function as both a persistent bootable USB
+and an <a href="https://en.wikipedia.org/wiki/NTFS" target="_blank">NTFS</a> or <a
+href="https://en.wikipedia.org/wiki/File_Allocation_Table" target="_blank">FAT32</a> formatted
+storage device fully compatible as a Windows, Linux, or OSX standard USB jump drive.  See the
+<a href="arch-usb-more.html" target="_self">extra options</a>.</p>
+<br>
+
+<p>A final thing to point out is the lack of a <a href="https://wiki.archlinux.org/index.php/swap"
+target="_blank">swap</a> partition in this installation of Linux.  The reason for this is twofold.
+First, recognizing that flash memory has a finite number of writes before it eventually goes bad,
+the lack of a swap partition may at least decrease some of those writes.  Second, realizing
+that nearly any computer you boot up onthese days has at least a few gigabytes of available RAM, 
+the need for a swap partition is mostly non-existent.</p>
+<br>
+<br>
+
+<!--<==========================  Boot Up the Live Installation ISO  ===========================>--->
+<h3 id="boot_live" class="section">Boot Up the Live Installation ISO</h3>
+
+<p>Insert you USB or CD installation medium in the computer and boot it up.  Use the
+computer's boot menu (usually invoked with <span class="emph">[F12]</span> on a 
+<a href="http://www.computerhope.com/jargon/b/boot_menu.htm" target="_blank">PC</a> or 
+the <span class="emph">[option]</span> key on a 
+<a href="https://support.apple.com/en-us/HT204417" target="_blank">Mac</a>) to select the 
+inserted boot media.  When presented with the boot device selection menu, select the entry for 
+either <span class="emph">BIOS</span> or <span class="emph">UEFI</span> as explained 
+<a href="#BIOS_vs_UEFI" target="_self">above</a>.</p>
+<br>
+
+<p>A bootloader menu will appear with several options.  Select the <span class="emph">Boot
+Arch Linux (x64_86)</span> or <span class="emph">(i686)</span> option as explained <a
+href="#i686_vs_x86_64" target="_self">above</a>.  After  a minimal amount of necessary drivers
+are loaded to RAM, you will be presented with a root 
+<a href="https://wiki.archlinux.org/index.php/zsh" target="_blank">Z shell</a> prompt.</p>
+<br>
+
+<!--<===========================  keymap and/or language  ===========================>--->
+<h4 id="change_keys" class="subsection">keymap and/or language</h4>
+
+<p>The default console keymap and language in the live shell are, respectively, <a
+href="https://en.wikipedia.org/wiki/File:KB_United_States-NoAltGr.svg" target="blank">US</a>
+and US English <a href="https://en.wikipedia.org/wiki/UTF-8" target="_blank">UTF-8</a>.  For my
+purposes (speaking mostly English, living mostly in Wisconsin) this has always been exactly
+what I needed, and the steps below to change these settings have never been required.</p>
+<br>
+
+<p>If a different keyboard mapping is required, view the available keymaps:</p>
+<div class="codebox input">
+    ls /usr/share/kbd/keymaps/&#42;&#42;/&#42;.map.gz | less
+</div>
+<p>Load the required keymap.  Here, <span class="variable">mapname</span> is the filename
+of the required map without path or file extension:</p>
+<div class="codebox input">
+    loadkeys <span class="variable">mapname</span>
+</div>
+<br>
+
+<p>To change the language of the live root environment, edit <span
+class="file">/etc/locale.gen</span> and uncomment the line containing your desired language
+(for US English, uncomment <span class="code">en_US.UTF-8 UTF-8</span>):</p>
+<div class="codebox input">
+
+    nano /etc/locale.gen
+</div>
+<p>Generate the locale information:</p>
+<div class="codebox input">
+    locale-gen
+</div>
+<p>Ensure the <span class="code">LANG</span> variable is set in <span
+class="file">/etc/locale.conf</span>:</p>
+<div class="codebox input">
+    cat /etc/locale.conf
+</div>
+<p>If it is incorrect or not present, create a new <span class="file">/etc/locale.conf</span>;
+<span class="variable">localeline</span> is the first word of the uncommented line in <span
+class="file">/etc/locale.gen</span> (for US English, this is 
+<span class="code">en_US.UTF-8</span>):</p>
+<div class="codebox input">
+    echo LANG=<span class="variable">localeline</span>> /etc/locale.conf
+</div>
+<br>
+<br>
+
+<!--<===============================  Connect to the Internet  ================================>--->
+<h3 id="connect" class="section">Connect to the Internet</h3>
+
+<p>If there is an active networking cable plugged into the machine, the live shell will bring
+up the computer's network interface card and automatically attempt to lease an IP address from
+the network during bootup.  To check the network connection, ping some website:</p>
+<div class="codebox input">
+    ping -c1 google.com
+</div>
+<br>
+
+<!--<===================================  wired  ====================================>--->
+<h4 id="wired" class="subsection">wired</h4>
+
+<p>If you have an active networking cable is plugged into the machine and you are unable to connect 
+to the internet, begin troubleshooting by viewing the interface names and statuses:</p>
+<div class="codebox input">
+    ip link
+</div>
+<p>Ensure the network device is powered; <span class="variable">ethname</span> is the name of the
+interface of type <span class="emph">link/ether</span> (most likely the name is 
+<span class="emph">eno1</span> or <span class="emph">eno0</span>):</p>
+<div class="codebox input">
+    ip link set<span class="variable"> ethname </span>up
+</div>
+<p>Now attempt to manually lease a DHCP IP address from the network:</p>
+<div class="codebox input">
+    dhcpcd <span class="variable">ethname</span>
+</div>
+<p>If you are issued a lease, try to ping an outside server again:</p>
+<div class="codebox input">
+    ping -c1 archlinux.org
+</div>
+<br>
+
+<p>If you still aren't connected or were unable to lease an IP address, view all the instances
+of dhcpcd to see what the hell is going on:</p>
+<div class="codebox input">
+    systemctl list-units | grep dhcpcd
+</div>
+<p>See detailed instance information to troubleshoot any hardware issues:</p>
+<div class="codebox input">
+    systemctl status dhcpcd@<span class="variable">ethname</span>.service
+</div>
+<p>If you still can't connect to the internet, see the <a
+href="https://wiki.archlinux.org/index.php/Network_configuration" target="_blank">ArchWiki</a>
+for further help.</p>
+<br>
+
+<!--<==================================  wireless  ===================================>--->
+<h4 id="wireless" class="subsection">wireless</h4>
+
+<p>If a wired connection is unavailable or you prefer to use wifi, most wireless interfaces
+are supported by the drivers on the installation ISO.  To check if this is possible on your
+current machine, see if any kernel drivers have been loaded for the wireless interface:</p>
+<div class="codebox input">
+    lspci -k | grep -A3 "Network controller"
+</div>
+<br>
+<p>If no device is present or no drivers have been loaded, you are mostly out of luck; although
+it technically may be possible to import the proper drivers via some other removable memory
+device, such a procedure is far beyond the scope of this guide.  If you really want to keep 
+pursuing this route, checkout the official Linux wireless 
+<a href="https://wireless.wiki.kernel.org/" target="_blank">wiki</a> and the ArchWiki wireless 
+<a href="https://wiki.archlinux.org/index.php/Wireless_network_configuration
+#Installing_driver.2Ffirmware" target="_blank">page</a> to get started.</p>
+<br>
+
+<p>If the drivers have been loaded, view the names of any available wireless interfaces:</p>
+<div class="codebox input">
+    iw dev
+</div>
+<p>Now bring the wifi interface up.  Here, <span class="variable">wifiname</span>
+is the wifi interface name given by <span class="code">iw dev</span> (the name will generally be
+six characters long, most likely starting with <span class="code">wlp</span> followed by three
+additional numbers and/or letters):</p>
+
+<div class="codebox input">
+    ip link set <span class="variable">wifiname</span> up
+</div>
+<p>Scan for available networks:</p>
+<div class="codebox input">
+    iw dev <span class="variable">wifiname</span> scan | grep "SSID:"
+</div>
+<p>If you don't know what type of authentication is required by the network you want to connect
+to, view the full scan results:</p>
+<div class="codebox input">
+    iw dev <span class="variable">wifiname</span> scan | less
+</div>
+<br>
+
+<p>For a connection with no encryption; <span class="variable">networkname</span> is the network
+you wish to connect to:</p>
+<div class="codebox input">
+    iw dev <span class="variable">wifiname</span> connect <span
+    class="variable">"networkname"</span>
+</div>
+<p>For a connection with <a href="https://en.wikipedia.org/wiki/Wi-Fi_Protected_Access"
+target="_blank">WPA/WPA2</a> encryption (most likely scenario); <span
+class="variable">password</span> is the wifi password:</p>
+<div class="codebox input">
+    wpa_supplicant -i <span class="variable">wifiname</span> -c <(wpa_passphrase
+    <span class="variable">"networkname"</span> <span class="variable">"password"</span>)
+</div>
+<p>For a connection using <a href="https://en.wikipedia.org/wiki/Wired_Equivalent_Privacy"
+target="_blank">WEP</a> (old, not likely):</p>
+<div class="codebox input">
+    iw dev <span class="variable">wifiname</span> connect
+    <span class="variable">"networkname"</span> key 0:<span class="variable">"password"</span>)
+</div>
+<p>Once a connection is established, fork the process to the background by
+pressing <span class="emph">[ctrl]+z</span> and typing <span class="code">bg</span>.</p>
+<br>
+
+<p>Finally, attempt lease an IP address:</p>
+<div class="codebox input">
+    dhcpcd <span class="variable">wifiname</span>
+</div>
+<p>Check your network connection:</p>
+<div class="codebox input">ping -c1 archlinux.org</div>
+<p>If you are unable to obtain a wireless network connection, see the <a
+href="https://wiki.archlinux.org/index.php/Wireless_network_configuration"
+target="_blank">ArchWiki</a> for more information (good luck!).</p>
+<br>
+
+<!--<================================  system time  =================================>--->
+<h4 id="live_system_time" class="subsection">system time</h4>
+
+<p>Once connected to the internet, turn on the network time protocol to synchronize system
+time:</p>
+<div class="codebox input">timedatectl set-ntp true</div>
+<br>
+<br>
+
+<!--<==================================  Prepare USB Stick  ===================================>--->
+<h3 id="prepare" class="section">Prepare USB Stick</h3>
+
+<p>As mentioned earlier, this Arch Linux bootable USB stick will be compatible with both BIOS and
+UEFI booting modes.  In order for a storage device to boot in BIOS mode, the first 512 bytes of
+the device's memory must contain an <a href="https://en.wikipedia.org/wiki/Master_boot_record"
+target="_blank">MBR</a> (master boot record).  For a storage device to boot in UEFI mode, a special
+<a href="https://en.wikipedia.org/wiki/EFI_system_partition" target="_blank">ESP</a> (EFI system
+partion) is required.  Both partitions can be created using <span class="emph">gdisk</span>.</p>
+<br>
+
+<p>Before proceeding, determine the device name of the target USB drive.  First, before
+plugging in the target USB, view the currently available block devices:</p>
+<div class="codebox input">
+    lsblk
+</div>
+<p>Now insert the target flash drive and view the devices again.  The newly detected device <span
+class="variable">/dev/sdX</span> is the name of the target USB you will use for further partitioning
+and formatting.  Note that in the device name you will use is literally 
+<span class="code">/dev/sd<span class="variable">X</span></span> where the only thing that changes
+is the single lowercase letter value of <span class="variable">X</span>.  Double check that you
+have the correct device name <span class="variable">/dev/sdX</span>, lest you may repartition the
+internal hard drive of the machine you are on!</p>
+<br>
+
+<!--<=================================  partition  ==================================>--->
+<h4 id="partition" class="subsection">partition</h4>
+
+<p>There are several partitioning tools available in the live installation environment.  We'll use 
+<span class="emph">gdisk</span> to partition the target USB device:</p>
+<div class="codebox input">
+    gdisk <span class="variable">/dev/sdX</span>
+</div>
+<br>
+
+<p>First wipe the partitions on the target USB device by typing <span class="code">d</span>
+at the interactive prompt until no partitions remain:</p>
+<div class="codebox">
+    <span class="output">Command (? for help):</span> d<br>
+    <span class="output">No partitions</span>
+</div>
+<br>
+
+<p>Then, make a 10MB MBR partition starting in the beginning of the device's memory:</p>
+<div class="codebox">
+    <span class="output">Command (? for help):</span> n<br>
+    <span class="output">Partition number (1-128, default 1):<br>
+    First sector (34-<span class="emph">XXXXXX</span>), default = 64) or {+-}size{KMGTP}:<br>
+    Last sector (64-<span class="emph">XXXXXX</span>), default = <span class="emph">XXXXXX</span>)
+    or {+-}size{KMGTP}: </span>+10MB<br>
+    <span class="output">Current type is 'Linux filesystem'<br>
+    Hex code or GUID (L to show codes, Enter = 8300):</span> EF02
+</div>
+<br>
+
+<p>Create a 500MB ESP partition:</p>
+<div class="codebox">
+    <span class="output">Command (? for help):</span> n<br>
+    <span class="output">Partition number (2-128, default 2):<br>
+    First sector (34-<span class="emph">XXXXXX</span>), default = <span class="emph">YYYY</span>)
+    or {+-}size{KMGTP}:<br>
+    Last sector (64-<span class="emph">XXXXXX</span>), default = <span class="emph">XXXXXX</span>)
+    or {+-}size{KMGTP}: </span>+500MB<br>
+    <span class="output">Current type is 'Linux filesystem'<br>
+    Hex code or GUID (L to show codes, Enter = 8300):</span> EF00
+</div>
+<br>
+
+<p>Finally, allocate the remaining space to the Linux partition:</p>
+<div class="codebox">
+    <span class="output">Command (? for help):</span> n<br>
+    <span class="output">Partition number (3-128, default 3):<br>
+    First sector (34-<span class="emph">XXXXXX</span>), default = <span class="emph">YYYY</span>)
+    or {+-}size{KMGTP}:<br>
+    Last sector (64-<span class="emph">XXXXXX</span>), default = <span class="emph">XXXXXX</span>)
+    or {+-}size{KMGTP}:<br>
+    Current type is 'Linux filesystem'<br>
+    Hex code or GUID (L to show codes, Enter = 8300):</span>
+</div>
+<br>
+
+<p>Double check the new partition table:</p>
+<div class="codebox">
+    <span class="output">Command (? for help):</span> p
+</div>
+<p>It should look like to this:</p>
+<div class="codebox output pre">Number  Start (sector)  End (sector)  Size      Code  Name
+   1              64         20543   10.0 MiB   EF02  BIOS boot partition
+   2           20544       1044543   500.0 MiB  EF00  EFI System
+   3         1044544      62521310   29.3 GiB   8300  Linux filesystem</div>
+<br>
+
+<p>If it's all good, write it to the USB stick and exit <span class="emph">gdisk</span>:</p>
+<div class="codebox">
+    <span class="output">Command (? for help):</span> w<br>
+</div>
+<br>
+
+<!--<===================================  format  ===================================>--->
+<h4 id="format" class="subsection">format</h4>
+
+<p>View the new block layout of the target USB device:</p>
+<div class="codebox input">
+    lsblk <span class="variable">/dev/sdX</span>
+</div>
+<p>You should now have three blocks on your target USB device: a 10MB block <span
+class="variable">/dev/sdX1</span>, a 500MB block <span class="variable">/dev/sdX2</span>, and
+block taking all the remaining memory<span class="variable">/dev/sdX3</span>.  </p>
+<br>
+
+<p>Do not format the <span class="variable">/dev/sdX1</span> block.  
+This is the BIOS/MBR partion.</p>
+<br>
+
+<p>Format the 500MB EFI system partition with a FAT32 filesystem:</p>
+<div class="codebox input">
+    mkfs.fat -F32 <span class="variable">/dev/sdX2</span>
+</div>
+<br>
+
+<p>Format the Linux partition with an 
+<a href="https://en.wikipedia.org/wiki/Ext4" target="_blank">ext4</a> filesystem:</p>
+<div class="codebox input">
+    mkfs.ext4 <span class="variable">/dev/sdX3</span>
+</div>
+<br>
+<br>
+
+<!--<===============================  Install Base Package Set  ===============================>--->
+<h3 id="base" class="section">Install Base Package Set</h3>
+
+<p>Following the <a href="https://wiki.archlinux.org/index.php/Arch_Linux#Principles"
+target="_blank">Arch Way</a>, this guide intends to install the minimum number of packages 
+necessary to create a portable working Linux system.</p>
+<br>
+
+<!--<===================================  mount  ====================================>--->
+<h4 id="mount" class="subsection">mount</h4>
+
+<p>Mount the ext4 formatted partition as the root filesystem:</p>
+<div class="codebox input">
+    mount <span class="variable">/dev/sdX3</span> /mnt
+</div>
+<p>Mount the FAT32 formatted ESP partition to <span class="file">/mnt/boot</span>:</p>
+<div class="codebox input">
+    mkdir /mnt/boot<br>
+    <span class="output">&#35;</span> mount <span class="variable">/dev/sdX2</span> /mnt/boot
+</div>
+<br>
+
+<!--<==================================  pacstrap  ==================================>--->
+<h4 id="pacstrap" class="subsection">pacstrap</h4>
+
+<p>Download and install the Arch Linux base packages:</p>
+<div class="codebox input">
+    pacstrap /mnt base base-devel
+</div>
+<br>
+
+<!--<===================================  fstab  ====================================>--->
+<h4 id="fstab" class="subsection">fstab</h4>
+
+<p>The <a href="https://en.wikipedia.org/wiki/Fstab" target="_blank">fstab</a> is used
+by Linux systems to correctly mount available disk partitions on bootup.  The partitions
+can be identified in the <span class="file">fstab</span> in several ways, and some install
+methods still use the standard labels (<span class="code">/dev/...</span>) instead of 
+<a href="https://en.wikipedia.org/wiki/Universally_unique_identifier" target="_blank">UUIDs</a>.
+This would surely be a failure point of an install on a USB stick as the standard assigned labels
+for removable devices are not consistent on each boot.</p>
+<br>
+
+<p>Toggle the <span class="code">-U</span> tag to enable UUIDs as <span class="file">fstab</span>
+source identifiers:</p>
+<div class="codebox input">
+    genfstab -U /mnt >> /mnt/etc/fstab
+</div>
+<br>
+
+<p>Ensure that the fstab is good:</p>
+<div class="codebox input">
+    cat /mnt/etc/fstab
+</div>
+<p>It should be good to go, but if you see more than the two entries for each of the mounted
+partitions, you will need to manually edit <span class="file">/etc/fstab</span> and remove the
+extra entries:</p>
+<div class="codebox input">
+    nano /mnt/etc/fstab
+</div>
+<p>For additional help manually editing <span class="file">/etc/fstab</span>, see the 
+<a href="https://wiki.archlinux.org/index.php/Fstab" target="_blank">wiki</a>.</p>
+<br>
+<br>
+
+
+<!--<=================================  Configure New System  =================================>--->
+<h3 id="configure" class="section">Configure New System</h3>
+
+<p>Your USB stick should now contain a persistent Linux system.  We still need to configure a few 
+things before it's ready to boot on its own, though.</p>
+<br>
+<p>In addition to the base packages and  
+in the name of ultimate portability, we will also pull and install the required programs to 
+support automatic wired networking, manual wireless networking, all common graphics cards, 
+touchpad input devices, and laptop battery systems.  
+We also need to make some configuration tweaks to ensure that the new system loads support for 
+removable devices before it attempts to access the filesystems, and that it assigns consistent 
+names to network devices regardless of the machine it is boot up on.</p>
+<br>
+
+<!--<===================================  chroot  ===================================>--->
+<h4 id="chroot" class="subsection">chroot</h4>
+<p>Begin by 
+<a href="https://wiki.archlinux.org/index.php/change_root" target="_blank">chrooting</a> 
+into the new system.  Besides the final network settings, everything can be set within the 
+<span class="emph">chroot</a> environment:</p>
+<div class="codebox input">
+    arch-chroot /mnt /bin/bash
+</div>
+<br>
+
+<!--<===================================  locale  ===================================>--->
+<h4 id="locale" class="subsection">locale</h4>
+
+<p>Set the time zone (use <a href="http://www.tldp.org/LDP/abs/html/tabexpansion.html"
+target="_blank">tab-completion</a> to discover available entries for <span
+class="variable">region</span> and <span class="variable">city</span>):</p>
+<div class="codebox input">
+    ln -s /usr/share/zoneinfo/<span class="variable">region</span>/<span
+    class="variable">city</span> /etc/localtime
+</div>
+<p>Generate <span class="file">/etc/adjtime</span>:</p>
+<div class="codebox input">
+    hwclock --systohc
+</div>
+<br>
+
+<p>Edit <span class="file">/etc/locale.gen</span> and uncomment your desired language:</p>
+<div class="codebox input">
+    nano /etc/locale.gen
+</div>
+<p>(for US English, uncomment <span class="code">en_US.UTF-8 UTF-8</span>)</p>
+<br>
+
+<p>Generate the locale information:</p>
+<div class="codebox input">
+    locale-gen
+</div>
+<p>Set the <span class="code">LANG</span> variable in <span class="file">/etc/locale.conf</span>;
+<span class="variable">localeline</span> is the first word of line uncommented in <span
+class="file">/etc/locale.gen</span>:</p>
+<div class="codebox input">
+    echo LANG=<span class="variable">localeline</span> > /etc/locale.conf
+</div>
+<p>(for US English, <span class="variable">localeline</span> is 
+<span class="code">en_US.UTF-8</span>)</p>
+<br>
+
+<!--<==================================  hostname  ==================================>--->
+<h4 id="hostname" class="subsection">hostname</h4>
+
+<p>Create the <span class="file">/etc/hostname</span> file containing the desired 
+<span class="variable">hostname</span> on a single line:</p>
+<div class="codebox input">
+    echo <span class="variable">hostname</span> > /etc/hostname
+</div>
+<br>
+
+<p>Edit <span class="file">/etc/hosts</span> to add an appropriate local hostname entry:</p>
+<div class="codebox input">
+    nano /etc/hosts
+</div>
+<p>Add the line:</p>
+<div class="codebox">
+    127.0.1.1 &nbsp;&nbsp; <span class="variable">hostname</span>.localdomain &nbsp;&nbsp; 
+    <span class="variable">hostname</span>
+</div>
+<br>
+
+<!--<===============================  RAM disk image  ===============================>--->
+<h4 id="RAM_disk" class="subsection">RAM disk image</h4>
+
+<p>In order to boot the Linux Kernel persistently off of a USB device, some adjustments may be
+necessary to the initial
+<a href="https://en.wikipedia.org/wiki/Initrd" target="_blank">RAM disk image</a>.
+We need to ensure that block device support is properly loaded before any attempt at loading
+the filesystem.  This not always the way a RAM disk image is configured in a generic Linux 
+installation, and I suspect this may be another one of the failure
+points in other Linux USB installations out there.  To configure a custom RAM disk image, edit
+the <span class="code">HOOKS</span> variable in <span class="file">/etc/mkinitcpio.conf</span>:</p>
+
+<div class="codebox input">
+    nano /etc/mkinitcpio.conf
+</div>
+<p>Ensure the <span class="code">block</span> hook comes before the
+<span class="code">filesystems</span> hook and directly after the <span class="code">udev</span> 
+hook like the following:</p>
+<div class="codebox">
+    HOOKS="base udev block filesystems keyboard fsck"
+</div>
+<br>
+<p>Now regenerate the initial RAM disk image with the changes made:</p>
+<div class="codebox input">mkinitcpio -p linux</div>
+<br>
+
+<!--<==========================  network interface names  ===========================>--->
+<h4 id="network_interface_names" class="subsection">network interface names</h4>
+
+<p>Arch Linux's basic service manager, <a href="https://wiki.archlinux.org/index.php/Systemd"
+target="_blank">systemd</a>, assigns network interfaces <a
+href="https://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames/"
+target="_blank">predictable names</a> based on the actual device hardware.  This is great for just
+about any other type of install, but can pose some problems for the portable USB installation
+we're going for.  To ensure that the ethernet and wifi interfaces will always be respectively
+named <span class="emph">eth0</span> and <span class="emph">wlan0</span>, revert the Arch Linux
+USB back to traditional device naming:</p>
+<div class="codebox input">
+    ln -s /dev/null /etc/udev/rules.d/80-net-setup-link.rules
+</div>
+<br>
+
+<!--<===============================  journal config  ===============================>--->
+<h4 id="journal_config" class="subsection">journal config</h4>
+
+<p>A default installation of Arch Linux is setup with <a
+href="https://wiki.archlinux.org/index.php/Systemd"
+target="_blank">systemd</a> to continuously journal various information about
+current processes and write that data to storage on disk.  For a persistent bootable
+installation on a flash memory device, however, we can change some options in
+<a href="https://www.freedesktop.org/software/systemd/man/journald.conf.html"
+target="_blank">journald.conf</a> to enable journal keeping entirely in RAM (thus
+reducing writes to the flash device).  To control where journal data is stored, edit <span
+class="file">/etc/systemd/journald.conf</span>:</p>
+
+<div class="codebox input">
+    nano /etc/systemd/journald.conf
+</div>
+<p>To switch journal data storage to RAM, set the storage variable to volatile by ensuring the
+following line is uncommented:</p>
+<div class="codebox">
+    Storage=volatile
+</div>
+<br>
+
+<p>As an additional precaution, to ensure the operating system doesn't overfill RAM with journal
+data, set the max-use variable by adding the line:</p>
+<div class="codebox">
+    SystemMaxUse=16M
+</div>
+<br>
+
+<!--<===============================  mount options  ================================>--->
+<h4 id="mount_options" class="subsection">mount options</h4>
+
+<p>Modern filesystems are able to record various metadata (last accessed,
+last modified, user rights, etc.) about their files.  A default filesystem mount
+generally keeps track of as much as this information as possible.  For a persistent
+bootable operating system on a flash memory device, however, we should limit some
+of this record keeping in order to reduce writes to the flash device.  Using the <a
+href="http://tldp.org/LDP/solrhe/Securing-Optimizing-Linux-RH-Edition-v1.3/chap6sec73.html"
+target="_blank">noatime</a> mount option in <a href="https://wiki.archlinux.org/index.php/Fstab"
+target="_blank">fstab</a>  will disable the record keeping of file access times: no writes will
+occur when a file is read, only when it is modified.</p>
+<br>
+
+<p>To use the noatime mount option for the bootable USB, we'll need to edit the 
+<span class="file">fstab</span>:</p>
+<div class="codebox input">
+    nano /etc/fstab
+</div>
+<p>There should be two sets of mount instructions in <span class="file">fstab</span>: an
+<span class="file">ext4</span> filesystem mounted at<span class="file"> /</span>, and a <span
+class="file">vfat</span> filesystem mounted at<span class="file"> /boot</span>.  To disable record
+keeping of file access times, change the mount options of the <span class="file">ext4</span>
+formatted partition by changing the<span class="code"> relatime </span>option to<span class="code">
+noatime</span>.</p>
+<br>
+
+<!--<================================  bootloader  ==================================>--->
+<h4 id="bootloader" class="subsection">bootloader</h4>
+
+<p>To enable booting the target USB stick in both boot modes, two <a
+href="https://wiki.archlinux.org/index.php/Category:Boot_loaders" target="_blank">bootloaders</a>
+will need to be installed.  For ease of installation, we'll install 
+<a href="https://en.wikipedia.org/wiki/GNU_GRUB" target="_blank">GRUB</a> for both modes.</p>
+<br>
+
+<p>Install the <span class="emph">grub</span> and <span class="emph">efibootmgr</span> packages:</p>
+<div class="codebox input">
+    pacman -S grub efibootmgr
+</div>
+<p>View the current block devices to determine the target USB device:</p>
+<div class="codebox input">
+    lsblk
+</div>
+<p>Note the target USB device name (without any numbers) <span class="variable">/dev/sdX</span>.</p>
+<br>
+
+<p>Setup GRUB for MBR/BIOS booting mode:</p>
+<div class="codebox input">
+    grub-install --target=i386-pc --boot-directory /boot <span class="variable">/dev/sdX</span>
+</div>
+<p>Setup GRUB for UEFI booting mode:</p>
+<div class="codebox input">
+    grub-install --target=x86_64-efi --efi-directory /boot --boot-directory /boot --removable
+</div>
+<br>
+
+<p>Generate a GRUB configuration:</p>
+<div class="codebox input">grub-mkconfig -o /boot/grub/grub.cfg</div>
+<br>
+
+<!--<==============================  network support  ===============================>--->
+<h4 id="network_support" class="subsection">network support</h4>
+
+<p>Install the <span class="emph">ifplugd</span> package to configure automatic IP leasing on 
+ethernet devices:</p>
+<div class="codebox input">
+    pacman -S ifplugd
+</div>
+<br>
+
+<p>Download the packages to enable wifi support with a basic command line interface:</p>
+<div class="codebox input">
+    pacman -S iw wpa_supplicant dialog
+</div>
+<br>
+
+<!--<===============================  video drivers  ================================>--->
+<h4 id="video_drivers" class="subsection">video drivers</h4>
+
+<p>To support most common GPUs, install all four basic open source video drivers:</p>
+<div class="codebox input">
+    pacman -S xf86-video-ati xf86-video-intel xf86-video-nouveau xf86-video-vesa
+</div>
+<br>
+
+<!--<==============================  touchpad support  ==============================>--->
+<h4 id="touchpad_support" class="subsection">touchpad support</h4>
+
+<p>Install support for standard notebook touchpads:</p>
+<div class="codebox input">
+    pacman -S xf86-input-synaptics
+</div>
+<br>
+
+<!--<==============================  battery support  ===============================>--->
+<h4 id="battery_support" class="subsection">battery support</h4>
+
+<p>Install support for checking battery charge and state:</p>
+<div class="codebox input">
+    pacman -S acpi
+</div>
+<br>
+
+<!--<===============================  root password  ================================>--->
+<h4 id="root_passwd" class="subsection">root password</h4>
+
+<p>Set the root password:</p>
+<div class="codebox input">
+    passwd
+</div>
+<br>
+
+
+<!--<=============================  sudo user account  ==============================>--->
+<h4 id="usersetup" class="subsection">sudo user account</h3>
+<p>Linux isn't meant to be used with root-user privileges all the time.  We need to create a
+user account with the ability to selectively run commands as root via the
+<a href="https://wiki.archlinux.org/index.php/sudo" target="_blank">sudo</a> tool.</p>
+<br>
+
+<p>Create a new user account<span class="variable"> newuser</span>:</p>
+<div class="codebox input">
+    useradd -m -G wheel -s /bin/bash <span class="variable">newuser</span>
+</div>
+<p>Set<span class="variable"> newuser </span>password:</p>
+<div class="codebox input">
+    passwd <span class="variable">newuser</span>
+</div>
+<br>
+
+<p>Edit the <span class="emph">/etc/sudoers</span> file with the <span class="code">visudo</span> 
+command:</p>
+<div class="codebox input">
+    EDITOR=nano visudo
+</div>
+<p>Give<span class="variable"> newuser </span>sudo access by adding the line:</p>
+<div class="codebox">
+    <span class="variable">newuser</span> &nbsp;ALL=(ALL) ALL
+</div>
+<br>
+
+<p>To better elevate user privaleges for system wide tasks, we'll also want to install 
+<a href="https://wiki.archlinux.org/index.php/Polkit" target="_blank">polkit</a>:</p>
+<div class="codebox input">
+    pacman -S polkit
+</div>
+<br>
+
+
+<!--<=============================  reboot new system  ==============================>--->
+<h4 id="reboot" class="subsection">reboot new system</h4>
+
+<p>Exit the chroot environment:</p>
+<div class="codebox input">exit</div>
+<p>Unmount the new USB drive:</p>
+<div class="codebox input">umount /mnt/boot /mnt</div>
+<br>
+
+<p>Powerdown the computer:</p>
+<div class="codebox input">poweroff</div>
+<p>If you booted off a Live USB installation medium, remove it now.</p>
+<br>
+
+<p>Powerup the computer and use the machine's boot menu to boot off your newly created Arch Linux
+USB.  We still need to configure a few things so login as the root user with the password
+chosen above.</p>
+<br>
+
+<p>Check that the network interfaces have been reverted to traditional
+naming style:</p>
+<div class="codebox input">
+    ip link
+</div>
+<p>LAN devices should appear as <span class="emph">eth0</span> and wireless devices as
+<span class="emph">wlan0</span>.</p>
+<br>
+
+<!--<===============================  netctl-ifplugd  ===============================>--->
+<h4 id="netctl-ifplud" class="subsection">netctl-ifplugd</h4>
+
+<p>Before enabling <span class="emph">ifplugd</span>, copy an example ethernet profile to <span
+class="file">/etc/netctl/</span>:</p>
+<div class="codebox input">
+    cp /etc/netctl/examples/ethernet-dhcp /etc/netctl/eth0-arch_usb
+</div>
+<p>Edit the new profile to ensure the interface is properly named (<span
+class="code">Interface=eth0</span>):</p>
+<div class="codebox input">
+    nano /etc/netctl/eth0-arch_usb
+</div>
+<br>
+
+<p>Start <span class="emph">ifplugd</span> to automatically connect to any available wired 
+network:</p>
+<div class="codebox input">
+    systemctl start netctl-ifplugd@eth0.service
+</div>
+<p>Enable automatic wired connection handling on all future sessions:</p>
+<div class="codebox input">
+    systemctl enable netctl-ifplugd@eth0.service
+</div>
+<br>
+
+<!--<=================================  wifi-menu  ==================================>--->
+<h4 id="wifi-menu" class="subsection">wifi-menu</h4>
+
+<p>We have already installed all the necessary packages to connect to most wifi networks.  To scan 
+for available networks and attempt to make a connection, use the simple command line interface 
+<span class="emph">wifi-menu</span>:</p>
+<div class="codebox input">
+    wifi-menu -o
+</div>
+<br>
+
+<!--<===========================  network time protocol  ============================>--->
+<h4 id="timedatectl" class="subsection">network time protocol</h4>
+<p>Once connected to the internet, turn on the network time protocol to synchronize system 
+time:</p>
+<div class="codebox input">
+    timedatectl set-ntp true
+</div>
+<br>
+
+<!--<===================================  logout  ===================================>--->
+<h4 id="logout" class="subsection">logout</h4>
+<p>Logout of the root user account:</p>
+<div class="codebox input">
+    logout
+</div>
+<br>
+<br>
+
+
+<!--<================================  Installation Complete  =================================>--->
+<h3 id="complete" class="section">Installation Complete!</h3>
+<p>Welcome to Arch Linux on USB.  First time users will notice that the base Arch
+Linux installation is about as basic as you can get.  By default, there is no <a
+href="https://en.wikipedia.org/wiki/X_Window_System" target="_blank">X Window
+System</a> or graphical user interface.  Once you install and configure a <a
+href="https://wiki.archlinux.org/index.php/window_manager" target="_blank">window
+manger</a> or <a href="https://wiki.archlinux.org/index.php/Desktop_environment"
+target="_blank">desktop environment</a> Arch Linux can be as graphical as
+your heart desires.  First time users should definitely read the ArchWiki's <a
+href="https://wiki.archlinux.org/index.php/general_recommendations" target="_blank">general
+recommendations</a> to get an idea of what is possible and where to get started customizing
+their  new USB installations.</p>
+<br>
+
+<p>For those users who want to setup a fully functioning desktop environment as quickly as
+possible, I have written several <a href="arch-usb-scripts.html" target="_self">installer
+scripts</a> to aid in this process.</p>
+<br>
+
+<p>Have fun!</p>
+    
+</div>                                                                        <!-- /#content -->
+</div>                                                                            <!-- /#wrapper -->
+</body>
+</html>
