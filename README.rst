@@ -54,8 +54,8 @@ A copy of the guide_.
     Users will first need to edit the script, adding their mount locations.
 
 
-``.config``
-===========
+``.config/``
+============
 
 ``issue``
 ---------
