@@ -1,11 +1,10 @@
 #!/bin/bash
-
+#
 ##========================  arch-usb_recommended.sh  =========================##
 #  by Chris Magyar...                                   c.magyar.ec@gmail.com  #
 #  Free as in speech...                                 use/change this shit!  #
 ##============================================================================##
 # Install selected packages on your Arch Linux USB.
-
 
 ##=============================  get_arr_pkgs()  =============================##
 # Set package list here.
@@ -40,6 +39,7 @@ arr_pkgs=(
     geany-plugins
     geogebra
     gftp
+    ghc
     gimp
     git
     gnupg
@@ -48,10 +48,10 @@ arr_pkgs=(
     gvfs
     htop
     hunspell-en
-    i3
     imagemagick
     imagemagick-doc
     inxi
+    jq
     libreoffice-fresh
     libvorbis
     lm_sensors
@@ -61,6 +61,7 @@ arr_pkgs=(
     mtools
     mysql-workbench
     ntfs-3g
+    numlockx
     okular
     openconnect
     p7zip
@@ -76,6 +77,7 @@ arr_pkgs=(
     tidy
     transmission-cli
     transmission-qt
+    ttf-hack
     tumbler
     unrar
     unzip
@@ -94,77 +96,69 @@ arr_pkgs=(
     zsh )
 }
 
-
 ##=================================  main()  =================================##
 main() {
     # main variables
     local arr_pkgs=()
     local arr_pkgs_sel=()
     # colors
-    local clr_Red='\e[0;38;5;196m'
-    local clr_RedB='\e[1;38;5;196m'
-    local clr_Blue='\e[0;38;5;27m'
-    local clr_BlueB='\e[1;38;5;27m'
-    local clr_Green='\e[1;38;5;46m'
-    local clr_GreenB='\e[1;38;5;46m'
-    local clr_Cyan='\e[0;38;5;14m'
-    local clr_CyanB='\e[1;36m'
-    local clr_Violet='\e[0;38;5;13m'
-    local clr_VioletB='\e[1;35m'
-    local clr_Gray='\e[0;37m'
-    local clr_white='\e[0;38;5;15m'
-    local clr_whiteB='\e[1;37m'
+    local Red='\e[0;38;5;196m'
+    local RedB='\e[1;38;5;196m'
+    local Blue='\e[0;38;5;27m'
+    local BlueB='\e[1;38;5;27m'
+    local Green='\e[1;38;5;46m'
+    local GreenB='\e[1;38;5;46m'
+    local Cyan='\e[0;38;5;14m'
+    local CyanB='\e[1;36m'
+    local Violet='\e[0;38;5;13m'
+    local VioletB='\e[1;35m'
+    local Gray='\e[0;37m'
+    local white='\e[0;38;5;15m'
+    local whiteB='\e[1;37m'
     # strings
-    local ps_error="${clr_RedB}:: ${clr_white}"
-    local ps_head="${clr_VioletB}:: ${clr_BlueB}"
-    local ps_info="${clr_BlueB}:: ${clr_white}"
-    local ps_prompt="${clr_GreenB}:: ${clr_white}"
-    local ps_sh="${clr_BlueB}\$ ${clr_Gray}"
-
+    local psError="${RedB}:: ${white}"
+    local psHead="${VioletB}:: ${BlueB}"
+    local psInfo="${BlueB}:: ${white}"
+    local psPrompt="${GreenB}:: ${white}"
+    local psSh="${BlueB}\$ ${Gray}"
     # get recommended packages
     get_arr_pkgs
-
     # print package information
-    printf "${ps_head}arch-usb_recommended.sh${clr_Violet} - "
+    printf "${psHead}arch-usb_recommended.sh${Violet} - "
     printf "Install (my)recommended packages on your Arch Linux USB.\n"
-    printf "${clr_white}Edit this script to fit your needs...\n\n"
-
+    printf "${white}Edit this script to fit your needs...\n\n"
     # print package list
-    printf "${ps_info}${clr_BlueB}Recommended Packages: ${clr_white}"
+    printf "${psInfo}${BlueB}Recommended Packages: ${white}"
     printb "${arr_pkgs[*]}\n" 25 0
     printf "\n"
-
     # prompt for user selection
-    printf "${clr_BlueB}1) ${clr_white}Install all recommended packages.\n"
-    printf "${clr_BlueB}2) ${clr_white}Display package description and prompt "
+    printf "${BlueB}1) ${white}Install all recommended packages.\n"
+    printf "${BlueB}2) ${white}Display package description and prompt "
     printf "y/n for every package.\n"
-    printf "${clr_BlueB}0) ${clr_white}Exit.\n"
-    printf "${ps_prompt}Enter a selection ${clr_GreenB}> ${clr_white}"
+    printf "${BlueB}0) ${white}Exit.\n"
+    printf "${psPrompt}Enter a selection ${GreenB}> ${white}"
     read -r str_input
     str_input="${str_input,,}"
-
     # install all packages
     if [[ ${str_input} == "1" ]]; then
-        printf "${ps_sh}sudo pacman --color=always -S ${arr_pkgs[*]}"
-        printf "${clr_white}\n"
+        printf "${psSh}sudo pacman --color=always -S ${arr_pkgs[*]}"
+        printf "${white}\n"
         sudo pacman --color=always -S "${arr_pkgs[@]}"
-
     # select packages to install
     elif [[ ${str_input} == "2" ]]; then
         for pkg in ${arr_pkgs[@]}; do
             pkg_info ${pkg} & wait $!
-            if prompt "Install ${pkg}${clr_white}?"; then
+            if prompt "Install ${pkg}${white}?"; then
                 arr_pkgs_sel+=( "${pkg}" )
             fi
         done
-        printf "${ps_info}Installing selected packages...\n"
-        printf "${ps_sh}sudo pacman --color=always -S ${arr_pkgs_sel[*]}"
-        printf "${clr_white}\n"
+        printf "${psInfo}Installing selected packages...\n"
+        printf "${psSh}sudo pacman --color=always -S ${arr_pkgs_sel[*]}"
+        printf "${white}\n"
         # install selected packages
         sudo pacman --color=always -S "${arr_pkgs_sel[@]}"
     fi
 }
-
 
 ##================================  prompt()  ================================##
 # Basic Y/N prompt.  Returns 0 if user inputs [yes], 1 if [no].
@@ -178,7 +172,7 @@ prompt() {
             --no|-n|-N)   str_yn="[y/N]> "; shift;;
         esac
     done
-    printf "${ps_prompt}$1 ${clr_Green}${str_yn}${clr_white}"
+    printf "${psPrompt}$1 ${Green}${str_yn}${white}"
     read -r str_input
     str_input="${str_input,,}"
     if [[ ${str_input} =~ ^(yes|y)$ ]] ||
@@ -188,7 +182,6 @@ prompt() {
         return 1
     fi
 }
-
 
 ##================================  printb()  ================================##
 # Prints a block of indented text.
@@ -209,7 +202,6 @@ printb() {
     done
 }
 
-
 ##===============================  pkg_info()  ===============================##
 # Print package or package group description from official repos.
 pkg_info() {
@@ -224,29 +216,28 @@ pkg_info() {
                          grep --color=never -Po "Description     : \K.*"`
         # if package exists in Official repositories; then
         if [ $? -eq 0 ]; then
-            printf "${clr_Cyan}$1 ${clr_white}${str_description}\n"
+            printf "${Cyan}$1 ${white}${str_description}\n"
         # if no package description exists in the repositories; then
         else
             # get package group listing from Official repositories
             lst_pkgs=`pacman -Sgqg $1 2>/dev/null`
             # if package group exists in the repositories; then
             if [ $? -eq 0 ]; then
-                printf "${clr_CyanB}$1 ${clr_whiteB}(group):\n"
+                printf "${CyanB}$1 ${whiteB}(group):\n"
                 # call pacman -Si for each package in group
                 local IFS=$'\n'
                 for pkg in `pacman -Sgqg $1`; do
                     str_description=`pacman -Si ${pkg} 2>/dev/null | \
                          grep --color=never -Po "Description     : \K.*"`
-                    printf "${clr_Cyan}${pkg} ${clr_white}${str_description}\n"
+                    printf "${Cyan}${pkg} ${white}${str_description}\n"
                 done
             # if package group does not exist in official repositories; then
             else
-                printf "${ps_error}No such package or group in Arch Linux "
-                printf "official repositories: ${clr_Red}$1\n"
+                printf "${psError}No such package or group in Arch Linux "
+                printf "official repositories: ${Red}$1\n"
             fi
         fi
     fi
 }
-
 
 main

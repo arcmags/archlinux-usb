@@ -15,6 +15,10 @@ A copy of the guide_.
 ``install_scripts/``
 ====================
 
+Scripts for downloading and installing packages from both the official
+repositories and the AUR.  All scripts should be executed as a normal user; a
+sudo password prompt will be appear before any changes take place.
+
 ``arch-usb_core.sh``
 --------------------
 

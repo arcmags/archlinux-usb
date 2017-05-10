@@ -1,24 +1,26 @@
 #!/bin/bash
-
+#
 ##============================  arch-usb_aur.sh  =============================##
 #  by Chris Magyar...                                   c.magyar.ec@gmail.com  #
 #  Free as in speech...                                 use/change this shit!  #
 ##============================================================================##
 # Install selected Arch User Repository packages on your Arch Linux USB.
 
-
 ##=============================  get_arr_pkgs()  =============================##
 # Set package list here.
 get_arr_pkgs() {
 arr_pkgs=(
+    i3-gaps
     dropbox
     dropbox-cli
     geany-themes
     ttf-font-awesome
     ttf-ms-fonts
-    ttf-openlogos-archupdate )
+    ttf-openlogos-archupdate
+    qt5-styleplugins
+    cower
+    pacaur )
 }
-
 
 ##=================================  main()  =================================##
 main() {
@@ -26,95 +28,114 @@ main() {
     local arr_pkgs=()
     local arr_pkgs_sel=()
     # colors
-    local clr_Red='\e[0;38;5;196m'
-    local clr_RedB='\e[1;38;5;196m'
-    local clr_Blue='\e[0;38;5;27m'
-    local clr_BlueB='\e[1;38;5;27m'
-    local clr_Green='\e[1;38;5;46m'
-    local clr_GreenB='\e[1;38;5;46m'
-    local clr_Cyan='\e[0;38;5;14m'
-    local clr_CyanB='\e[1;36m'
-    local clr_Violet='\e[0;38;5;13m'
-    local clr_VioletB='\e[1;35m'
-    local clr_Gray='\e[0;37m'
-    local clr_white='\e[0;38;5;15m'
-    local clr_whiteB='\e[1;37m'
+    local Red='\e[0;38;5;196m'
+    local RedB='\e[1;38;5;196m'
+    local Blue='\e[0;38;5;27m'
+    local BlueB='\e[1;38;5;27m'
+    local Green='\e[1;38;5;46m'
+    local GreenB='\e[1;38;5;46m'
+    local Yellow='\e[0;38;5;11m'
+    local YellowB='\e[1;33m'
+    local Cyan='\e[0;38;5;14m'
+    local CyanB='\e[1;36m'
+    local Violet='\e[0;38;5;13m'
+    local VioletB='\e[1;35m'
+    local Gray='\e[0;37m'
+    local white='\e[0;38;5;15m'
+    local whiteB='\e[1;37m'
     # strings
-    local ps_error="${clr_RedB}:: ${clr_white}"
-    local ps_head="${clr_VioletB}:: ${clr_BlueB}"
-    local ps_info="${clr_BlueB}:: ${clr_white}"
-    local ps_prompt="${clr_GreenB}:: ${clr_white}"
-    local ps_sh="${clr_BlueB}\$ ${clr_Gray}"
-
+    local psError="${RedB}:: ${white}"
+    local psHead="${VioletB}:: ${BlueB}"
+    local psInfo="${BlueB}:: ${white}"
+    local psPrompt="${GreenB}:: ${white}"
+    local psSh="${BlueB}\$ ${Gray}"
+    local psWarn="${YellowB}:: ${white}"
     # get recommended packages
     get_arr_pkgs
-
     # print script information
-    printf "${ps_head}arch-usb_aur.sh${clr_Violet} - "
+    printf "${psHead}arch-usb_aur.sh${Violet} - "
     printf "Install some packages from the Arch User Repository.\n\n"
-
     # print package list
-    printf "${ps_info}${clr_BlueB}AUR Packages: ${clr_white}"
+    printf "${psInfo}${BlueB}AUR Packages: ${white}"
     printb "${arr_pkgs[*]}\n" 17 0
     printf "\n"
-
     # prompt for user selection
-    printf "${clr_BlueB}1) ${clr_white}Install all listed AUR packages.\n"
-    printf "${clr_BlueB}2) ${clr_white}Display package description and prompt "
+    printf "${BlueB}1) ${white}Install all listed AUR packages.\n"
+    printf "${BlueB}2) ${white}Display package description and prompt "
     printf "y/n for every package.\n"
-    printf "${clr_BlueB}0) ${clr_white}Exit.\n"
-    printf "${ps_prompt}Enter a selection ${clr_GreenB}> ${clr_white}"
+    printf "${BlueB}0) ${white}Exit.\n"
+    printf "${psPrompt}Enter a selection ${GreenB}> ${white}"
     read -r str_input
     str_input="${str_input,,}"
-
-    if [[ ${str_input} == "1" ]] || [[ ${str_input} == "2" ]]; then
-        if [[ ${str_input} == "1" ]]; then
+    if [[ "${str_input}" == '1' ]] || [[ "${str_input}" == '2' ]]; then
+        if [[ "${str_input}" == '1' ]]; then
             # select all packages
             arr_pkgs_sel=${arr_pkgs[@]}
-        elif [[ ${str_input} == "2" ]]; then
+        elif [[ "${str_input}" == '2' ]]; then
             # select specific packages
             for pkg in ${arr_pkgs[@]}; do
                 pkg_info ${pkg} & wait $!
-                if prompt "Install ${pkg}${clr_white}?"; then
+                if prompt "Install ${pkg}${white}?"; then
                     arr_pkgs_sel+=( "${pkg}" )
                 fi
             done
-            printf "${ps_info}Installing selected packages...\n"
+            printf "${psInfo}Installing selected packages...\n"
         fi
-
         # make temp directory
-        printf "${ps_sh}mkdir /tmp/aur\n"
+        printf "${psSh}mkdir /tmp/aur\n"
         mkdir -p /tmp/aur
-        printf "${ps_sh}cd /tmp/aur\n"
+        printf "${psSh}cd /tmp/aur\n"
         cd /tmp/aur
         for pkg in ${arr_pkgs_sel[@]}; do
             # download package snapshot
-            printf "${ps_sh}curl -L -O \"https://aur.archlinux.org/cgit/\""
+            printf "${psSh}curl -L -O \"https://aur.archlinux.org/cgit/\""
             printf "aur.git/snapshot/${pkg}.tar.gz\n"
             curl -L -O \
                 "http://aur.archlinux.org/cgit/aur.git/snapshot/${pkg}.tar.gz"
             # uncompress package
-            printf "${ps_sh}tar -xvf ${pkg}.tar.gz\n"
+            printf "${psSh}tar -xvf ${pkg}.tar.gz\n"
             tar -xvf "${pkg}.tar.gz"
-            printf "${ps_sh}cd ${pkg}\n"
+            printf "${psSh}cd ${pkg}\n"
             cd "${pkg}"
+            # check for required gpg keys
+            flg_key=0
+            key_code=`cat PKGBUILD | grep validpgpkeys`
+            key=`echo ${key_code} | \
+                grep -Po "^validpgpkeys=\( ?'?\K[A-Za-z0-9]+"`
+            if [[ "${key}" =~ [A-Za-z0-9]+ ]]; then
+                if [ `gpg --list-keys | grep "${key}" &>/dev/null` ]; then
+                    printf "${psWarn}pgp key required:\n"
+                    printf "${psWarn}${key_code}\n"
+                    # prompt to add key
+                    if prompt "Import key $Yellow$key${white}?"; then
+                        printf "${psSh}gpg --recv-keys $key\n"
+                        gpg --recv-keys "$key"
+                    else
+                        flg_key=1
+                    fi
+                fi
+            fi
             # build and install package
-            printf "${ps_sh}makepkg -sri\n"
-            makepkg -sri
+            if [ $flg_key -eq 0 ]; then
+                printf "${psSh}makepkg -sri\n"
+                makepkg -sri
+            else
+                printf "${psError}Unable to install ${Red}$pkg${white} "
+                printf "without valid gpg keys\n"
+            fi
             # remove snapshot
-            printf "${ps_sh}cd /tmp/aur\n"
+            printf "${psSh}cd /tmp/aur\n"
             cd /tmp/aur
-            printf "${ps_sh}rm -Rdf ${pkg} ${pkg}.tar.gz\n"
+            printf "${psSh}rm -Rdf ${pkg} ${pkg}.tar.gz\n"
             rm -Rdf "${pkg}" "${pkg}.tar.gz"
         done
         # remove temp directory
-        printf "${ps_sh}cd /tmp\n"
+        printf "${psSh}cd /tmp\n"
         cd /tmp
-        printf "${ps_sh}rm -Rfd /tmp/aur\n"
+        printf "${psSh}rm -Rfd /tmp/aur\n"
         rm -Rfd /tmp/aur
     fi
 }
-
 
 ##================================  prompt()  ================================##
 # Basic Y/N prompt.  Returns 0 if user inputs [yes], 1 if [no].
@@ -128,7 +149,7 @@ prompt() {
             --no|-n|-N)   str_yn="[y/N]> "; shift;;
         esac
     done
-    printf "${ps_prompt}$1 ${clr_Green}${str_yn}${clr_white}"
+    printf "${psPrompt}$1 ${Green}${str_yn}${white}"
     read -r str_input
     str_input="${str_input,,}"
     if [[ ${str_input} =~ ^(yes|y)$ ]] ||
@@ -138,7 +159,6 @@ prompt() {
         return 1
     fi
 }
-
 
 ##================================  printb()  ================================##
 # Prints a block of indented text.
@@ -159,7 +179,6 @@ printb() {
     done
 }
 
-
 ##===============================  pkg_info()  ===============================##
 # Print package description from the AUR.
 pkg_info() {
@@ -169,17 +188,16 @@ pkg_info() {
     str_aur_description=`curl -s \
         "https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=$1" \
         | grep --color=never -oP \
-        'pkgdesc.*(quot|apos);\K.*(?=&(quot|apos);)'`
+        '^pkgdesc=(\x27|\x22)\K.*(?=(\1))'`
     # if package exists in AUR; then
     if [ $? -eq 0 ]; then
-        printf "${clr_Cyan}$1 (AUR) ${clr_white}"
+        printf "${Cyan}$1 (AUR) ${white}"
         printf "${str_aur_description}\n"
     # if package does not exist in AUR; then
     else
-        printf "${ps_error}no such package or group: "
-        printf "${clr_Red}$1\n"
+        printf "${psError}no such package or group: "
+        printf "${Red}$1\n"
     fi
 }
-
 
 main
