@@ -19,7 +19,7 @@ set_defaults() {
     dir_mnt_thing=   # filled
     dir_mnt_bgsc=    # in
     str_mnt_options="defaults,username=${username_uwec},rw,users,nodfs,uid="
-    str_mnt_options+="${username_linux}"
+    str_mnt_options+="${username_linux},vers=2.0"
 }
 
 
@@ -86,7 +86,7 @@ main() {
     # mount W
     if (mountpoint -q "${dir_mnt_W}"); then
         printf "${ps_info}W drive already mounted.\n"
-    else    
+    else
         if prompt --no "Mount student/instructor W drive?"; then
         mkdir -p "${dir_mnt_W}"
             printf "${ps_sh}sudo mount -t cifs //students.uwec.edu/deptdir/ "
@@ -98,10 +98,10 @@ main() {
     # mount yoda
     if (mountpoint -q "${dir_mnt_yoda}"); then
         printf "${ps_info}Yoda already mounted.\n"
-    else        
+    else
         if prompt --no "Mount webserver yoda?"; then
             mkdir -p "${dir_mnt_yoda}"
-            printf "${ps_sh}sudo mount -t cifs //yoda.cs.uwec.edu/CS318$/" 
+            printf "${ps_sh}sudo mount -t cifs //yoda.cs.uwec.edu/CS318$/"
             printf "students \"${dir_mnt_yoda}\" -o ${str_mnt_options}\n"
             sudo mount -t cifs //yoda.cs.uwec.edu/CS318$/students \
                  "${dir_mnt_yoda}" -o "${str_mnt_options}"
@@ -205,7 +205,7 @@ prompt() {
     printf "${ps_info}$1 ${clr_Green}${str_yn}${clr_white}"
     read -r str_input
     str_input="${str_input,,}"
-    if [[ ${str_input} =~ ^(yes|y)$ ]] || 
+    if [[ ${str_input} =~ ^(yes|y)$ ]] ||
        ([[ ! ${str_input} =~ ^(no|n)$ ]] && [[ "${str_yn}" == "[Y/n]> " ]]);then
         return 0
     else

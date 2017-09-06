@@ -70,6 +70,7 @@ arr_pkgs=(
     qt5ct
     sagemath
     sagemath-doc
+    samba
     smbclient
     sshfs
     sysstat
